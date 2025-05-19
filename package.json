@@ -1,0 +1,17 @@
+{
+  "name": "site_pngs_personalizados",
+  "version": "1.0.0",
+  "description": "Site de imagens PNG personalizadas com backend em Node.js e Express.",
+  "main": "servidor.js",
+  "scripts": {
+    "start": "node servidor.js"
+  },
+  "keywords": [],
+  "author": "Romário Araújo",
+  "license": "ISC",
+  "dependencies": {
+    "cloudinary": "^2.6.1",
+    "cors": "^2.8.5",
+    "express": "^5.1.0"
+  }
+}

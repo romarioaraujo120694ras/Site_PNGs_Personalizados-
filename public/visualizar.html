@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Visualizar Imagem</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <img src="https://res.cloudinary.com/dw7vcxgy9/image/upload/v1747595757/logo_td29bu.png" alt="Logo" />
+  </header>
+  <div class="container">
+    <a href="index.html" class="voltar">⬅ Voltar</a>
+    <div id="imagemContainer">
+      <img id="imagemSelecionada" src="" alt="Imagem Selecionada">
+    </div>
+    <a id="btnDownload" href="" download class="botao-download">Baixar Imagem</a>
+  </div>
+
+  <section class="relacionadas">
+    <h2>Imagens Relacionadas</h2>
+    <div class="galeria" id="imagensRelacionadas"></div>
+  </section>
+
+  <script>
+    function formatarNomeImagem(nomeArquivo) {
+      return nomeArquivo
+        .replace(/\.[^/.]+$/, "")
+        .replace(/[_-]/g, " ")
+        .replace(/\b\w/g, l => l.toUpperCase());
+    }
+
+    function extrairPalavrasChave(url) {
+      const ignorar = ["caixa", "milk", "meio", "piramide", "bombom", "sacola", "bolsinha"];
+      const nomeArquivo = url.substring(url.lastIndexOf("/") + 1).toLowerCase();
+      return nomeArquivo.replace(/\.[^/.]+$/, "").split(/[_-]/).filter(palavra => !ignorar.includes(palavra));
+    }
+
+    async function carregarImagemSelecionada() {
+      const params = new URLSearchParams(window.location.search);
+      const caminhoImagem = params.get('img');
+      if (!caminhoImagem) return;
+
+      document.getElementById('imagemSelecionada').src = caminhoImagem;
+      document.getElementById('btnDownload').href = caminhoImagem;
+
+      const partes = caminhoImagem.split('/');
+      const pastaIndex = partes.findIndex(p => p === 'caneacas' || p === 'convites' || p === 'personalizados');
+      if (pastaIndex === -1 || pastaIndex + 1 >= partes.length) return;
+
+      const categoria = partes[pastaIndex];
+      const nomeAtual = partes[pastaIndex + 1];
+
+      try {
+        const response = await fetch(`/listar/${categoria}`);
+        const imagens = await response.json();
+        const galeria = document.getElementById("imagensRelacionadas");
+        const palavrasChave = extrairPalavrasChave(caminhoImagem);
+
+        let contador = 0;
+        imagens.forEach(nomeArquivo => {
+          if (nomeArquivo === nomeAtual || contador >= 8) return;
+
+          const nomeLower = nomeArquivo.toLowerCase();
+          const relacionado = palavrasChave.some(palavra => nomeLower.includes(palavra));
+
+          if (relacionado) {
+            const urlImagem = `https://res.cloudinary.com/dw7vcxgy9/image/upload/v1/imagens/${categoria}/${nomeArquivo}`;
+            const a = document.createElement("a");
+            a.href = `visualizar.html?img=${encodeURIComponent(urlImagem)}`;
+            a.className = "imagem-item";
+            a.innerHTML = `
+              <img src="${urlImagem}" alt="${nomeArquivo}">
+              <p class="nome-imagem">${formatarNomeImagem(nomeArquivo)}</p>
+            `;
+            galeria.appendChild(a);
+            contador++;
+          }
+        });
+      } catch (e) {
+        console.error("Erro ao carregar imagens relacionadas:", e);
+      }
+    }
+
+    window.onload = carregarImagemSelecionada;
+  </script>
+</body>
+</html>

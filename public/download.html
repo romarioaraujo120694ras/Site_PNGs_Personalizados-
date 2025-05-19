@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Baixando Imagem...</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+    }
+    .anuncio {
+      margin: 30px auto;
+      width: 300px;
+      height: 250px;
+      background-color: #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+    #contador {
+      font-size: 18px;
+      margin-top: 20px;
+    }
+    .botao-direto {
+      display: inline-block;
+      margin-top: 20px;
+      background-color: #28a745;
+      color: white;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    .imagem-preview {
+      margin-top: 20px;
+      max-width: 300px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Seu download começará em instantes...</h1>
+  <div class="anuncio">
+    <!-- Aqui entrará o anúncio do AdSense -->
+    Anúncio
+  </div>
+  <p id="contador">Baixando em <span id="tempo">5</span> segundos...</p>
+
+  <img id="preview" class="imagem-preview" src="" alt="Imagem para download" style="display:none;">
+
+  <a id="linkDownload" href="#" class="botao-direto" target="_blank" download>Download Direto</a>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const caminhoImagem = params.get("arquivo");
+
+    const preview = document.getElementById("preview");
+    const linkDownload = document.getElementById("linkDownload");
+
+    if (caminhoImagem) {
+      preview.src = caminhoImagem;
+      preview.style.display = 'block';
+      linkDownload.href = caminhoImagem;
+    }
+
+    let tempo = 5;
+    const spanTempo = document.getElementById("tempo");
+
+    const intervalo = setInterval(() => {
+      tempo--;
+      spanTempo.textContent = tempo;
+      if (tempo <= 0) {
+        clearInterval(intervalo);
+        window.location.href = caminhoImagem;
+      }
+    }, 1000);
+  </script>
+</body>
+</html>

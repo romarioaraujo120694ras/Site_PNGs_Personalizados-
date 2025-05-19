@@ -1,0 +1,233 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  text-align: center;
+  margin: 0;
+  background: #fff;
+  color: #202020;
+}
+
+header {
+  background: linear-gradient(to right, #f4d701, #FFD700);
+  color: black;
+  padding: 30px 20px;
+  box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+}
+
+.logo {
+  max-width: 150px;
+  margin-bottom: 10px;
+}
+
+.galeria {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  justify-content: center;
+  padding: 10px;
+}
+
+.imagem-item {
+  background: #fff;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgb(214, 214, 214);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+}
+.imagem-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+.imagem-item img {
+  width: auto;
+  max-width: 100%;
+  max-height: 170px;
+  border-radius: 10px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+.imagem-item button {
+  margin: 0;
+  padding: 8px 46px;
+  background: #FFD700;
+  color: black;
+  border: none;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.imagem-item button:hover {
+  background: #e6c200;
+  transform: scale(1.05);
+}
+.nome-imagem {
+  margin-top: 8px;
+  font-weight: bold;
+  color: #000;
+}
+
+#imagemContainer img {
+  width: 100%;
+  max-width: 600px;
+  margin: 10px 0;
+}
+
+.imagens-relacionadas {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+.imagens-relacionadas img {
+  width: 100px;
+  height: auto;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.imagens-relacionadas img:hover {
+  transform: scale(1.1);
+}
+
+button, .botao-download {
+  background: #FFD700;
+  color: black;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 25px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  margin-top: 20px;
+}
+button:hover, .botao-download:hover {
+  background: #e6c200;
+  transform: scale(1.05);
+}
+
+footer {
+  padding: 20px;
+  font-size: 14px;
+  color: #555;
+}
+
+/* Animações */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-delay {
+  animation: fadeIn 1.5s ease forwards;
+}
+.animate-slide-up {
+  animation: slideUp 1s ease forwards;
+}
+
+/* Pesquisa */
+#pesquisa {
+  width: 80%;
+  max-width: 400px;
+  padding: 10px;
+  margin-top: 15px;
+  border-radius: 20px;
+  border: 2px solid #FFD700;
+  font-size: 16px;
+}
+
+/* Botão Carregar Mais */
+#btnCarregarMais {
+  display: block;
+  margin: 30px auto;
+  background: #000;
+  color: #FFD700;
+  padding: 12px 25px;
+  font-weight: bold;
+  font-size: 16px;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+#btnCarregarMais:hover {
+  background: #222;
+  transform: scale(1.05);
+}
+
+/* Botão Download */
+#btnDownload {
+  display: inline-block;
+  margin: 20px 0;
+  padding: 15px 30px;
+  background: #FFD700;
+  color: black;
+  text-decoration: none;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+#btnDownload:hover {
+  background: #FFD700;
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Filtros */
+.filtros-categorias {
+  margin-top: 15px;
+}
+.filtros-categorias button {
+  background: #FFD700;
+  color: #000;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s;
+}
+.filtros-categorias button:hover {
+  background: #e6c200;
+  transform: scale(1.05);
+}
+
+/* Botão WhatsApp */
+.whatsapp-flex {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  background: #25d366;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 30px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-family: Arial, sans-serif;
+  font-size: 14px;
+}
+.whatsapp-flex img {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+.whatsapp-flex:hover {
+  transform: scale(1.05);
+}
