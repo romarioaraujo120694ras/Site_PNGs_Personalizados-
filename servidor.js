@@ -1,18 +1,29 @@
 const express = require("express");
 const cors = require("cors");
 const { v2: cloudinary } = require("cloudinary");
+const path = require("path");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Configuração do CORS
 app.use(cors());
 
-// Configuração da Cloudinary
+// Servir arquivos estáticos da pasta 'public'
+app.use(express.static(path.join(__dirname, "public")));
+
+// Configuração do Cloudinary
 cloudinary.config({
   cloud_name: "dw7vcxgy9",
   api_key: "833421445544343",
   api_secret: "vsVCkqFRjFL1IgWbfU3X49ZCQ64"
 });
+
+// Rota raiz servindo o 'index.html'
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+
 
 // Lista as categorias (pastas dentro de 'imagens')
 app.get("/listar-categorias", async (req, res) => {
