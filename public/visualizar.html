@@ -14,7 +14,7 @@
     <div id="imagemContainer">
       <img id="imagemSelecionada" src="" alt="Imagem Selecionada">
     </div>
-    <a id="btnDownload" href="" download class="botao-download">Baixar Imagem</a>
+    <a id="btnDownload" href="" class="botao-download">Baixar Imagem</a>
   </div>
 
   <section class="relacionadas">
@@ -42,7 +42,9 @@
       if (!caminhoImagem) return;
 
       document.getElementById('imagemSelecionada').src = caminhoImagem;
-      document.getElementById('btnDownload').href = caminhoImagem;
+
+      // Atualiza o botão de download para abrir download.html com parâmetro img
+      document.getElementById('btnDownload').href = `download.html?img=${encodeURIComponent(caminhoImagem)}`;
 
       const partes = caminhoImagem.split('/');
       const pastaIndex = partes.findIndex(p => p === 'caneacas' || p === 'convites' || p === 'personalizados');
