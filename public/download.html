@@ -7,74 +7,112 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 50px;
+      padding: 40px;
     }
-    .anuncio {
-      margin: 30px auto;
+
+    .ad-container {
       width: 300px;
       height: 250px;
       background-color: #ccc;
+      margin: 20px auto;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-weight: bold;
     }
-    #contador {
-      font-size: 18px;
-      margin-top: 20px;
+
+    .imagem-preview {
+      max-width: 300px;
+      max-height: 300px;
+      margin: 20px auto;
+      display: block;
     }
-    .botao-direto {
+
+    .download-link {
       display: inline-block;
-      margin-top: 20px;
+      margin-top: 30px;
+      padding: 12px 24px;
       background-color: #28a745;
       color: white;
-      padding: 10px 20px;
       text-decoration: none;
-      border-radius: 8px;
+      border-radius: 6px;
       font-weight: bold;
     }
-    .imagem-preview {
-      margin-top: 20px;
-      max-width: 300px;
+
+    /* Spinner animado */
+    .spinner {
+      margin: 20px auto;
+      width: 40px;
+      height: 40px;
+      border: 5px solid #ccc;
+      border-top: 5px solid #28a745;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
   </style>
 </head>
 <body>
   <h1>Seu download começará em instantes...</h1>
-  <div class="anuncio">
-    <!-- Aqui entrará o anúncio do AdSense -->
-    Anúncio
-  </div>
-  <p id="contador">Baixando em <span id="tempo">5</span> segundos...</p>
 
-  <img id="preview" class="imagem-preview" src="" alt="Imagem para download" style="display:none;">
+  <div class="ad-container">Anúncio</div>
 
-  <a id="linkDownload" href="#" class="botao-direto" target="_blank" download>Download Direto</a>
+  <img id="preview" class="imagem-preview" src="" alt="Imagem para download">
+
+  <div id="loading" class="spinner"></div>
+  <p id="contador">Baixando em 5 segundos...</p>
+
+  <a id="downloadLink" class="download-link" href="#" download>Download Direto</a>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
-    const caminhoImagem = params.get("arquivo");
+  const urlParams = new URLSearchParams(window.location.search);
+  const imgURL = urlParams.get('img');
 
-    const preview = document.getElementById("preview");
-    const linkDownload = document.getElementById("linkDownload");
+  const preview = document.getElementById("preview");
+  const link = document.getElementById("downloadLink");
+  const contador = document.getElementById("contador");
+  const loading = document.getElementById("loading");
 
-    if (caminhoImagem) {
-      preview.src = caminhoImagem;
-      preview.style.display = 'block';
-      linkDownload.href = caminhoImagem;
-    }
+  if (imgURL) {
+    preview.src = imgURL;
+    link.href = imgURL;
+    link.setAttribute('download', '');
 
-    let tempo = 5;
-    const spanTempo = document.getElementById("tempo");
-
+    let segundos = 5;
     const intervalo = setInterval(() => {
-      tempo--;
-      spanTempo.textContent = tempo;
-      if (tempo <= 0) {
+      segundos--;
+      contador.innerText = `Baixando em ${segundos} segundos...`;
+      if (segundos === 0) {
         clearInterval(intervalo);
-        window.location.href = caminhoImagem;
+        loading.style.display = "none";
+
+        // Forçar o download via Blob
+        fetch(imgURL)
+          .then(res => res.blob())
+          .then(blob => {
+            const blobUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = blobUrl;
+            a.download = imgURL.split('/').pop().split('?')[0]; // extrai nome do arquivo
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(blobUrl);
+            contador.innerText = 'Download iniciado!';
+          })
+          .catch(() => {
+            contador.innerText = 'Erro ao iniciar download.';
+          });
       }
     }, 1000);
-  </script>
+  } else {
+    contador.innerText = "Nenhum arquivo especificado para download.";
+    loading.style.display = "none";
+  }
+</script>
 </body>
 </html>
