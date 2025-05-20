@@ -6,12 +6,19 @@ const tamanhoDoLote = 12;
 let modoBusca = false;
 
 function formatarNomeImagem(nomeArquivo) {
-  return nomeArquivo
+  const nomeSemExtensao = nomeArquivo
     .split("/")
     .pop()
     .replace(/\.[^/.]+$/, "")
     .replace(/[_-]/g, " ")
     .replace(/\b\w/g, l => l.toUpperCase());
+
+  // Remove possíveis sufixos do Cloudinary como códigos aleatórios
+  const partes = nomeSemExtensao.split(" ");
+  if (partes.length > 3) {
+    return partes.slice(0, -1).join(" ");
+  }
+  return nomeSemExtensao;
 }
 
 function formatarNomeCategoria(nome) {
@@ -64,6 +71,7 @@ function carregarMais() {
 
     const a = document.createElement("a");
     a.href = `visualizar.html?img=${encodeURIComponent(urlImagem)}`;
+    a.target = "_blank";
     a.className = "imagem-item";
     a.innerHTML = `
       <img src="${urlImagem}" alt="${nomeArquivo}">
