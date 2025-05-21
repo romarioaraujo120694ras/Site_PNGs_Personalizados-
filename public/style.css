@@ -46,7 +46,7 @@ header {
 .imagem-item img {
   width: auto;
   max-width: 100%;
-  max-height: 170px;
+  max-height: 220px;
   border-radius: 10px;
   object-fit: contain;
   display: block;
@@ -75,7 +75,7 @@ header {
 
 #imagemContainer img {
   width: 100%;
-  max-width: 600px;
+  max-width: 900px;
   margin: 10px 0;
 }
 
