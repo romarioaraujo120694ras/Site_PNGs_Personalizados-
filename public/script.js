@@ -13,7 +13,6 @@ function formatarNomeImagem(nomeArquivo) {
     .replace(/[_-]/g, " ")
     .replace(/\b\w/g, l => l.toUpperCase());
 
-  // Remove possíveis sufixos do Cloudinary como códigos aleatórios
   const partes = nomeSemExtensao.split(" ");
   if (partes.length > 3) {
     return partes.slice(0, -1).join(" ");
@@ -53,7 +52,7 @@ async function filtrarPorCategoria(categoria) {
 
   try {
     const response = await fetch(`/listar/${categoria}`);
-    imagens = await response.json(); // URLs completas do Cloudinary
+    imagens = await response.json();
     carregarMais();
   } catch (e) {
     console.error("Erro ao carregar imagens:", e);
@@ -69,20 +68,44 @@ function carregarMais() {
     const urlImagem = listaFonte[i];
     const nomeArquivo = formatarNomeImagem(urlImagem);
 
+    const cloudName = "dw7vcxgy9";
+    const caminhoRelativo = urlImagem.split(`/${cloudName}/image/upload/`)[1];
+    const thumbBlur = `https://res.cloudinary.com/${cloudName}/image/upload/w_100,q_10,e_blur:200/${caminhoRelativo}`;
+
     const a = document.createElement("a");
     a.href = `visualizar.html?img=${encodeURIComponent(urlImagem)}`;
     a.target = "_blank";
     a.className = "imagem-item";
     a.innerHTML = `
-      <img src="${urlImagem}" alt="${nomeArquivo}">
+      <img 
+        src="${thumbBlur}" 
+        data-src="${urlImagem}" 
+        alt="${nomeArquivo}" 
+        class="lazy-img"
+      >
       <p class="nome-imagem">${nomeArquivo}</p>
     `;
     galeria.appendChild(a);
   }
 
+  aplicarLazyLoading();
+
   indiceAtual = fim;
   document.getElementById("btnCarregarMais").style.display =
     indiceAtual >= listaFonte.length ? "none" : "block";
+}
+
+function aplicarLazyLoading() {
+  const imagens = document.querySelectorAll("img.lazy-img");
+  imagens.forEach(img => {
+    const srcAlta = img.getAttribute("data-src");
+    const novaImagem = new Image();
+    novaImagem.src = srcAlta;
+    novaImagem.onload = () => {
+      img.src = srcAlta;
+      img.classList.add("loaded");
+    };
+  });
 }
 
 function buscarImagens() {
