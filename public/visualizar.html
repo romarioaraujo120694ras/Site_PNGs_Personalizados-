@@ -4,15 +4,25 @@
   <meta charset="UTF-8">
   <title>Visualizar Imagem</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    #imagemSelecionada {
+      filter: blur(5px);
+      transition: filter 0.5s ease;
+    }
+    #imagemSelecionada.loaded {
+      filter: blur(0);
+    }
+  </style>
 </head>
 <body>
   <header>
     <img src="https://res.cloudinary.com/dw7vcxgy9/image/upload/v1747595757/logo_td29bu.png" alt="Logo" />
   </header>
+
   <div class="container">
     <a href="index.html" class="voltar">⬅ Voltar</a>
     <div id="imagemContainer">
-      <img id="imagemSelecionada" src="" alt="Imagem Selecionada">
+      <img id="imagemSelecionada" src="" data-src="" alt="Imagem Selecionada">
     </div>
     <a id="btnDownload" href="" class="botao-download">Baixar Imagem</a>
   </div>
@@ -38,57 +48,72 @@
         .filter(palavra => !ignorar.includes(palavra.toLowerCase()));
     }
 
+    function aplicarLazyLoadAltaQualidade() {
+      const img = document.getElementById("imagemSelecionada");
+      const altaQualidade = img.getAttribute("data-src");
+      const imgAlta = new Image();
+      imgAlta.src = altaQualidade;
+      imgAlta.onload = () => {
+        img.src = altaQualidade;
+        img.classList.add("loaded");
+      };
+    }
+
     async function carregarImagemSelecionada() {
-  const params = new URLSearchParams(window.location.search);
-  const caminhoImagem = params.get('img');
-  if (!caminhoImagem) return;
+      const params = new URLSearchParams(window.location.search);
+      const caminhoImagem = params.get('img');
+      if (!caminhoImagem) return;
 
-  document.getElementById('imagemSelecionada').src = caminhoImagem;
-  document.getElementById('btnDownload').href = `download.html?img=${encodeURIComponent(caminhoImagem)}`;
+      const cloudName = "dw7vcxgy9";
+      const pasta = caminhoImagem.split(`/${cloudName}/image/upload/`)[1];
 
-  // Extrair nome do arquivo atual (ex: caixa_milk_batman.png)
-  const nomeAtualCompleto = decodeURIComponent(caminhoImagem.split('/').pop());
-  const nomeAtualSemExtensao = nomeAtualCompleto.replace(/\.[^/.]+$/, "");
+      const imgSelecionada = document.getElementById("imagemSelecionada");
+      imgSelecionada.src = `https://res.cloudinary.com/${cloudName}/image/upload/w_10,q_10,e_blur:200/${pasta}`;
+      imgSelecionada.setAttribute("data-src", caminhoImagem);
 
-  const palavrasChave = extrairPalavrasChave(nomeAtualSemExtensao);
+      document.getElementById('btnDownload').href = `download.html?img=${encodeURIComponent(caminhoImagem)}`;
+      aplicarLazyLoadAltaQualidade();
 
-  try {
-    // Tentar encontrar qual categoria está na URL (por heurística)
-    const possiveisCategorias = ['caneacas', 'convites', 'personalizados'];
-    let categoriaDetectada = 'personalizados'; // fallback padrão
-    possiveisCategorias.forEach(cat => {
-      if (caminhoImagem.includes(`/${cat}/`)) categoriaDetectada = cat;
-    });
+      const nomeAtualCompleto = decodeURIComponent(caminhoImagem.split('/').pop());
+      const nomeAtualSemExtensao = nomeAtualCompleto.replace(/\.[^/.]+$/, "");
+      const palavrasChave = extrairPalavrasChave(nomeAtualSemExtensao);
 
-    const response = await fetch(`/listar/${categoriaDetectada}`);
-    const imagens = await response.json();
-    const galeria = document.getElementById("imagensRelacionadas");
+      try {
+        const possiveisCategorias = ['caneacas', 'convites', 'personalizados'];
+        let categoriaDetectada = 'personalizados';
+        possiveisCategorias.forEach(cat => {
+          if (caminhoImagem.includes(`/${cat}/`)) categoriaDetectada = cat;
+        });
 
-    let contador = 0;
-    imagens.forEach(urlCompleta => {
-      const nomeArquivo = urlCompleta.split('/').pop();
-      const nomeArquivoSemExtensao = nomeArquivo.replace(/\.[^/.]+$/, "").toLowerCase();
+        const response = await fetch(`/listar/${categoriaDetectada}`);
+        const imagens = await response.json();
+        const galeria = document.getElementById("imagensRelacionadas");
 
-      if (nomeArquivo === nomeAtualCompleto || contador >= 8) return;
+        let contador = 0;
+        imagens.forEach(urlCompleta => {
+          const nomeArquivo = urlCompleta.split('/').pop();
+          const nomeArquivoSemExtensao = nomeArquivo.replace(/\.[^/.]+$/, "").toLowerCase();
 
-      const relacionado = palavrasChave.some(palavra => nomeArquivoSemExtensao.includes(palavra.toLowerCase()));
+          if (nomeArquivo === nomeAtualCompleto || contador >= 8) return;
 
-      if (relacionado) {
-        const a = document.createElement("a");
-        a.href = `visualizar.html?img=${encodeURIComponent(urlCompleta)}`;
-        a.className = "imagem-item";
-        a.innerHTML = `
-          <img src="${urlCompleta}" alt="${formatarNomeImagem(nomeArquivo)}">
-          <p class="nome-imagem">${formatarNomeImagem(nomeArquivo)}</p>
-        `;
-        galeria.appendChild(a);
-        contador++;
+          const relacionado = palavrasChave.some(palavra => nomeArquivoSemExtensao.includes(palavra.toLowerCase()));
+
+          if (relacionado) {
+            const a = document.createElement("a");
+            a.href = `visualizar.html?img=${encodeURIComponent(urlCompleta)}`;
+            a.className = "imagem-item";
+            a.innerHTML = `
+              <img src="${urlCompleta}" alt="${formatarNomeImagem(nomeArquivo)}" loading="lazy">
+              <p class="nome-imagem">${formatarNomeImagem(nomeArquivo)}</p>
+            `;
+            galeria.appendChild(a);
+            contador++;
+          }
+        });
+      } catch (e) {
+        console.error("Erro ao carregar imagens relacionadas:", e);
       }
-    });
-  } catch (e) {
-    console.error("Erro ao carregar imagens relacionadas:", e);
-  }
-}
+    }
 
     window.onload = carregarImagemSelecionada;
   </script>
