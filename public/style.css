@@ -72,6 +72,14 @@ header {
   font-weight: bold;
   color: #000;
 }
+img.lazy-img {
+  filter: blur(5px);
+  transition: filter 0.5s ease;
+}
+img.lazy-img.loaded {
+  filter: blur(0);
+}
+
 
 #imagemContainer img {
   width: 100%;
