@@ -13,16 +13,17 @@ header {
   box-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
 }
 
-.logo {
-  max-width: 150px;
-  margin-bottom: 10px;
+@media (max-width: 480px) {
+  .logo {
+    max-width: 180px;
+  }
 }
 
 .galeria {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
   justify-content: center;
+  gap: 15px;
   padding: 10px;
 }
 
@@ -195,7 +196,12 @@ footer {
 
 /* Filtros */
 .filtros-categorias {
-  margin-top: 15px;
+  margin: 15px 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 10px;
 }
 .filtros-categorias button {
   background: #FFD700;
