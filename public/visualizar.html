@@ -2,15 +2,69 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Visualizar Imagem</title>
+  <link rel="icon" href="https://res.cloudinary.com/dw7vcxgy9/image/upload/v1748312120/icone_3_dxekqe.png" type="image/png">
   <link rel="stylesheet" href="style.css">
   <style>
     #imagemSelecionada {
       filter: blur(5px);
       transition: filter 0.5s ease;
+      max-width: 100%;
+      height: auto;
     }
+
     #imagemSelecionada.loaded {
       filter: blur(0);
+    }
+
+    /* Ajustes específicos para telas pequenas (celulares) */
+    @media (max-width: 600px) {
+      .container {
+        padding: 10px;
+        text-align: center;
+      }
+
+      .botao-download {
+        display: inline-block;
+        padding: 10px 20px;
+        margin-top: 15px;
+        font-size: 16px;
+      }
+
+      .galeria {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .imagem-item {
+        width: 45%;
+      }
+
+      .imagem-item img {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+      }
+
+      .nome-imagem {
+        font-size: 14px;
+        margin-top: 5px;
+      }
+
+      footer {
+        text-align: center;
+        padding: 20px 10px;
+        font-size: 14px;
+      }
+
+      footer a {
+        margin: 0 8px;
+        color: #007bff;
+        text-decoration: none;
+      }
     }
   </style>
 </head>
@@ -31,6 +85,13 @@
     <h2>Imagens Relacionadas</h2>
     <div class="galeria" id="imagensRelacionadas"></div>
   </section>
+
+  <!-- Rodapé com links -->
+  <footer>
+    <a href="sobre.html">Sobre</a>
+
+    <a href="politica.html">Política de Privacidade</a>
+  </footer>
 
   <script>
     function formatarNomeImagem(nomeArquivo) {
