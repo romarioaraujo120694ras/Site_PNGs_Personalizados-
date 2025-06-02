@@ -2,56 +2,83 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Baixando Imagem...</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 40px;
+      padding: 40px 20px;
+      background-color: #f8f8f8;
+    }
+
+    h1 {
+      color: #333;
     }
 
     .ad-container {
-      width: 400px;
+      width: 100%;
+      max-width: 400px;
       height: 250px;
-      background-color: #ccc;
+      background-color: #e2e2e2;
       margin: 20px auto;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: #555;
+      font-size: 18px;
+      border-radius: 10px;
     }
 
     .imagem-preview {
-      max-width: 200px;
-      max-height: 200px;
+      max-width: 220px;
+      max-height: 220px;
       margin: 20px auto;
       display: block;
+      border-radius: 8px;
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
     }
 
     .download-link {
       display: inline-block;
-      margin-top: 30px;
+      margin-top: 25px;
       padding: 12px 24px;
       background-color: #28a745;
       color: white;
       text-decoration: none;
       border-radius: 6px;
       font-weight: bold;
+      font-size: 16px;
     }
 
-    /* Spinner animado */
     .spinner {
       margin: 20px auto;
-      width: 40px;
-      height: 40px;
-      border: 5px solid #ccc;
-      border-top: 5px solid #28a745;
+      width: 50px;
+      height: 50px;
+      border: 6px solid #ccc;
+      border-top: 6px solid #28a745;
       border-radius: 50%;
       animation: spin 1s linear infinite;
     }
 
     @keyframes spin {
-      to {
-        transform: rotate(360deg);
+      to { transform: rotate(360deg); }
+    }
+
+    #contador {
+      font-size: 16px;
+      color: #555;
+    }
+
+    @media (max-width: 480px) {
+      .download-link {
+        font-size: 14px;
+        padding: 10px 20px;
+      }
+
+      .ad-container {
+        height: 180px;
+        font-size: 16px;
       }
     }
   </style>
@@ -61,7 +88,7 @@
 
   <div class="ad-container">Anúncio</div>
 
-  <img id="preview" class="imagem-preview" src="" alt="Imagem para download">
+  <img id="preview" class="imagem-preview" src="" alt="Imagem para download" loading="lazy">
 
   <div id="loading" class="spinner"></div>
   <p id="contador">Baixando em 5 segundos...</p>
@@ -69,50 +96,56 @@
   <a id="downloadLink" class="download-link" href="#" download>Download Direto</a>
 
   <script>
-  const urlParams = new URLSearchParams(window.location.search);
-  const imgURL = urlParams.get('img');
+    const urlParams = new URLSearchParams(window.location.search);
+    const imgURL = urlParams.get('img');
 
-  const preview = document.getElementById("preview");
-  const link = document.getElementById("downloadLink");
-  const contador = document.getElementById("contador");
-  const loading = document.getElementById("loading");
+    const preview = document.getElementById("preview");
+    const link = document.getElementById("downloadLink");
+    const contador = document.getElementById("contador");
+    const loading = document.getElementById("loading");
 
-  if (imgURL) {
-    preview.src = imgURL;
-    link.href = imgURL;
-    link.setAttribute('download', '');
+    if (imgURL) {
+      preview.src = imgURL;
+      link.href = imgURL;
+      link.setAttribute('download', '');
 
-    let segundos = 5;
-    const intervalo = setInterval(() => {
-      segundos--;
-      contador.innerText = `Baixando em ${segundos} segundos...`;
-      if (segundos === 0) {
-        clearInterval(intervalo);
-        loading.style.display = "none";
+      let segundos = 5;
+      const intervalo = setInterval(() => {
+        segundos--;
+        contador.innerText = `Baixando em ${segundos} segundo${segundos === 1 ? '' : 's'}...`;
+        if (segundos === 0) {
+          clearInterval(intervalo);
+          loading.style.display = "none";
 
-        // Forçar o download via Blob
-        fetch(imgURL)
-          .then(res => res.blob())
-          .then(blob => {
-            const blobUrl = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = blobUrl;
-            a.download = imgURL.split('/').pop().split('?')[0]; // extrai nome do arquivo
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(blobUrl);
-            contador.innerText = 'Download iniciado!';
-          })
-          .catch(() => {
-            contador.innerText = 'Erro ao iniciar download.';
-          });
-      }
-    }, 1000);
-  } else {
-    contador.innerText = "Nenhum arquivo especificado para download.";
-    loading.style.display = "none";
-  }
-</script>
+          // Forçar o download via Blob
+          fetch(imgURL)
+            .then(res => {
+              if (!res.ok) throw new Error('Erro ao baixar imagem');
+              return res.blob();
+            })
+            .then(blob => {
+              const blobUrl = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              const nomeArquivo = imgURL.split('/').pop().split('?')[0];
+              a.href = blobUrl;
+              a.download = nomeArquivo;
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(blobUrl);
+              contador.innerText = 'Download iniciado!';
+            })
+            .catch(() => {
+              contador.innerText = 'Erro ao iniciar o download.';
+            });
+        }
+      }, 1000);
+    } else {
+      contador.innerText = "Nenhuma imagem especificada para download.";
+      preview.style.display = "none";
+      loading.style.display = "none";
+      link.style.display = "none";
+    }
+  </script>
 </body>
 </html>
